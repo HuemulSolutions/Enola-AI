@@ -14,6 +14,11 @@
      - [LLM Steps](#llm-steps)
 6. [Documentation](#documentation)
    - [Sending Online Chat Data](#sending-online-chat-data)
+   - [Sending Multiple Tasks](#sending-multiple-tasks)
+   - [Sending File Information](#sending-file-information)
+   - [Sending API Information](#sending-api-information)
+   - [Sending Cost Information](#sending-cost-information)
+   - [Sending Batch Score Information](#sending-batch-score-information)
 7. [Summary](#summary)
 8. [Contributing](#contributing)
 9. [License](#license)
@@ -58,7 +63,7 @@ In your Command Prompt (Windows) or Terminal (Linux/macOS) type:
    pip install enola
    ```
 
-By doing a pip install, you have the Enola-AI Python library and its dependencies automatically installed in your device.
+By doing a pip install, you have the Enola-AI Python library and its dependencies automatically installed on your device.
 
 **Note: Advanced users may prefer to use a Virtual Environment to manage dependencies and 
 isolate the Enola-AI library from other Python packages.**
@@ -71,15 +76,15 @@ To start using the Enola-AI Python library, follow the steps below to initialize
 
 ### Initializing Tracking
 To connect to Enola and initialize tracking you will need:
-- A token provided by Enola. This token is essential for authentication and authorization purposes.
-- A Python script, you can start creating an empty Python file with .py extension. (eg. enola_sample.py, enola_script.py)
+- A token provided by Enola-AI. This token is essential for authentication and authorization purposes
+- A Python script. You can start by creating an empty Python file with a .py extension (eg. enola_sample.py, enola_script.py)
 
 #### **1. Loading Enola API Token**
 **You can load the token from a `.env` file (recommended):**
 
 This method is recommended due to better security for token management.
 - Go to the same directory where your Python file is located
-- To load the token, you have to create a .env file, with name ".env"
+- To load the token, create a file named `.env` in the same directory as your Python script
 
 - Then open the file with a text editor and add this line:
 
@@ -91,7 +96,7 @@ This method is recommended due to better security for token management.
 
 **Alternatively, you can set it directly in your script:**
 
-This method is easier and fine for testing purposes, but it is not the recommended method due to the token is exposed in the script. It is advisable to always keep your token information secure.
+This method is easier and fine for testing purposes, but it is not recommended because the token is exposed in the script.
 
 To set it directly in your Python script:
 ```python
@@ -99,7 +104,7 @@ token = 'your_api_token'
 ```
 **You can also load the token using Environment Variables:**
 
-Another method to load the token is by setting your Enola API token as an Environment Variable. This method offers more flexibility but it requires more complex configurations, depending on your operating system.
+Another method to load the token is by setting your Enola API token as an Environment Variable. This method (recommended for advanced users) offers more flexibility but requires more complex configurations, depending on your operating system.
 For convenience, the method for loading the token from a `.env` file will be covered instead in this guide.
 
 
@@ -110,7 +115,7 @@ In your Python script, start importing the necessary libraries:
 # Import necessary libraries
 from enola.tracking import Tracking     # Enola Tracking module
 from dotenv import load_dotenv          # .env Loader
-import os                               # Operating System functionalities
+import os                               # Import the os module for environment variable access
 ```
 
 #### **3. Initialize the Tracking Agent**
@@ -205,12 +210,12 @@ LLM Steps are used to track interactions with language models where token usage,
 ---
 ## Documentation
 
-In this section you will find complete documentation about Enola, with step-by-step instructions and examples, alongside explanations about the functionalities that this system has to offer:
+In this section, you will find complete documentation about Enola-AI, including step-by-step instructions and examples, along with explanations of the system's functionalities:
 
 Currently, this guide will cover:
 - Sending Online Chat Data
 
-Please keep in mind these are Upcoming Features and will become available soon:
+Please keep in mind these are upcoming features that will become available soon:
 - Sending Online Score Data
 - Sending Multiple Tasks
 - Sending File Information
@@ -218,7 +223,7 @@ Please keep in mind these are Upcoming Features and will become available soon:
 - Sending Cost Information
 - Sending Batch Score Data
 
-
+---
 ### Sending Online Chat Data
 
 When working with conversational AI agents, it's essential to track user interactions and model responses. Enola-AI allows you to send online chat data for monitoring and evaluation.
@@ -241,8 +246,15 @@ When working with conversational AI agents, it's essential to track user interac
    load_dotenv()
    token = os.getenv('ENOLA_TOKEN')
    ```
+
+3. **Define message input from the user**
    
-3. **Initialize the Tracking Object**
+   ```python
+   # Define variable user_input as the message input from the user
+   user_input="What car offers good performance for a low cost?"
+   ```
+   
+4. **Initialize the Tracking Object**
 
    Create an instance of the `Tracking` class to start tracking an execution.
 
@@ -257,45 +269,45 @@ When working with conversational AI agents, it's essential to track user interac
        session_id="Session456",
        channel_id="console",
        ip="192.168.1.1",
-       message_input="What car offers good performance for a low cost?"
+       message_input=user_input # "What car offers good performance for a low cost?"
    )
    ```
 
-4. **Create a New LLM Step**
+5. **Create a New LLM Step**
 
    Since we're interacting with a language model, we'll create an LLM Step.
 
    ```python
    # Create an LLM Step
-   step_chat = monitor.new_step("User Inquiry")
+   step_chat = monitor.new_llm_step("User Inquiry")
    ```
 
-5. **Add Extra Information**
+6. **Add Extra Information**
 
    You can add any additional information relevant to the step. In this case the user question.
 
    ```python
    # Add user's question
-   step_chat.add_extra_info("UserQuestion", "What car offers good performance for a low cost?")
+   step_chat.add_extra_info("UserQuestion", user_input)
    ```
 
-6. **Process the User Input with the Language Model**
+7. **Process the User Input with the Language Model**
 
    Suppose your model generates a response to the user's question.
 
    ```python
-   # Simulate model response
+   # Simulated model response
    model_response = "The Honda Civic offers great performance at a reasonable price."
    ```
 
-7. **Add the Model's Response to the Step**
+8. **Add the Model's Response to the Step**
 
    ```python
    # Add model's response
    step_chat.add_extra_info("ModelResponse", model_response)
    ```
 
-8. **Close the LLM Step**
+9. **Close the LLM Step**
 
    Indicate that the step has completed successfully, and include token usage and costs.
 
@@ -313,7 +325,7 @@ When working with conversational AI agents, it's essential to track user interac
    )
    ```
 
-9. **Execute the Tracking**
+10. **Execute the Tracking**
 
     Send the tracking data to the Enola-AI server.
 
@@ -325,11 +337,9 @@ When working with conversational AI agents, it's essential to track user interac
           num_iteratons=1
       )
       ```
-*After executing the Tracking, you have successfully completed all the necessary steps in sending online chat data. You can analyze the data in the Enola web interface by logging in.*
+*After executing the tracking, you have successfully completed all the necessary steps to send online chat data. You can analyze the data in the Enola-AI platform*
 	
 ### Complete Example: Sending Online Chat Data
-
-**Note 1: It is recommended to define the variable `user_input` to store the message input from the user and replace the hardcoded message in `message_input` with `user_input`. By following good programming practices, you can achieve a cleaner and more organized code.**
 
 ```python
 # Import necessary libraries
@@ -354,14 +364,14 @@ monitor = Tracking(
     session_id="Session456",
     channel_id="console",
     ip="192.168.1.1",
-    message_input=user_input	# Replace the previous hardcoded message with user_input
+    message_input=user_input
 )
 
 # Create an LLM Step
-step_chat = monitor.new_step("User Inquiry")
+step_chat = monitor.new_llm_step("User Inquiry")
 
 # Add user's question
-step_chat.add_extra_info("UserQuestion", user_input) # Replace the previous hardcoded message with user_input
+step_chat.add_extra_info("UserQuestion", user_input)
 
 # Simulated model response
 model_response = "The Honda Civic offers great performance at a reasonable price."
@@ -388,14 +398,14 @@ monitor.execute(
     num_iteratons=1
 )
 ```
-After executing the script and the tracking, you should get a console output indicating you have successfully sent the data to the Enola-AI servers, meaning you can monitor and evaluate your data in the Enola platform:
+After executing the script and the tracking, you should see a console output indicating that you have successfully sent the data to the Enola-AI servers, allowing you to monitor and evaluate your data on the Enola-AI platform:
 
 ```console
 Chat Session Tracking V1: sending to server... 
 Chat Session Tracking V1: finish OK! 
 ```
 
-**Note 2: The message in the variable `model_response` is being simulated in this example.**
+**Note: The message in the variable `model_response` is being simulated in this example.**
 
 ```Python
     # Simulated model response
@@ -403,7 +413,7 @@ Chat Session Tracking V1: finish OK!
 ```
 
 However, when your Python script effectively connects with an LLM Model (eg. Ollama running on your local machine or through an API), you can expect a real response that will be stored in the variable `model_response`.
-You can check our user guide to create a simple chatbot using Ollama running on your local machine (Available Soon).
+You can check our user guide to create a simple chatbot using Ollama running on your local machine (available soon).
 
 ---
 *Upcoming Features:*
